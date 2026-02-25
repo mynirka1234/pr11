@@ -19,6 +19,7 @@
 		<title> Регистрация </title>
 		
 		<script src="https://code.jquery.com/jquery-1.8.3.js"></script>
+		<script src="js/aes.js"></script>
 		<link rel="stylesheet" href="style.css">
 	</head>
 	<body>
@@ -58,6 +59,17 @@
 		</div>
 		
 		<script>
+			function encrypt(data) {
+				var key = CryptoJS.enc.Utf8.parse('1234567890123456');
+				var iv = CryptoJS.enc.Utf8.parse('1234567890123456');
+				var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(data), key, {
+					iv: iv,
+					mode: CryptoJS.mode.CBC,
+					padding: CryptoJS.pad.Pkcs7
+				});
+				return encrypted.toString();
+			}
+
 			var loading = document.getElementsByClassName("loading")[0];
 			var button = document.getElementsByClassName("button")[0];
 			
@@ -73,8 +85,8 @@
 							button.className = "button_diactive";
 							
 							var data = new FormData();
-							data.append("login", _login);
-							data.append("password", _password);
+							data.append("login", encrypt(_login));
+							data.append("password", encrypt(_password));
 							
 							// AJAX запрос
 							$.ajax({

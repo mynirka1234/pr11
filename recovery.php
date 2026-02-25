@@ -16,6 +16,7 @@
 <html>
 	<head> 
 		<script src="https://code.jquery.com/jquery-1.8.3.js"></script>
+		<script src="js/aes.js"></script>
 		<meta charset="utf-8">
 		<title> Восстановление пароля </title>
 		
@@ -72,6 +73,17 @@
 		</div>
 		
 		<script>
+			function encrypt(data) {
+				var key = CryptoJS.enc.Utf8.parse('1234567890123456');
+				var iv = CryptoJS.enc.Utf8.parse('1234567890123456');
+				var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(data), key, {
+					iv: iv,
+					mode: CryptoJS.mode.CBC,
+					padding: CryptoJS.pad.Pkcs7
+				});
+				return encrypted.toString();
+			}
+
 			var errorWindow = document.getElementsByClassName("input-error")[0];
 			var loading = document.getElementsByClassName("loading")[0];
 			var button = document.getElementsByClassName("button")[0];
@@ -92,7 +104,7 @@
 				button.className = "button_diactive";
 				
 				var data = new FormData();
-				data.append("login", _login);
+				data.append("login", encrypt(_login));
 				
 				// AJAX запрос
 				$.ajax({

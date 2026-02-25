@@ -10,6 +10,7 @@
 		
 		<link rel="stylesheet" href="style.css">
 		<script src="https://code.jquery.com/jquery-1.8.3.js"></script>
+		<script src="js/aes.js"></script>
 	</head>
 	<body>
 		<div class="top-menu">
@@ -79,14 +80,25 @@
 		</div>
 	</body>
 	<script>
+		function encrypt(data) {
+			var key = CryptoJS.enc.Utf8.parse('1234567890123456');
+			var iv = CryptoJS.enc.Utf8.parse('1234567890123456');
+			var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(data), key, {
+				iv: iv,
+				mode: CryptoJS.mode.CBC,
+				padding: CryptoJS.pad.Pkcs7
+			});
+			return encrypted.toString();
+		}
+
 		function SendMessage(sender) {
 			let Message = sender.parentElement.children[0].value;
 			let IdPost = sender.parentElement.id;
 			if(Message == "") return;
 
 			var Data = new FormData();
-			Data.append("Message", Message);
-			Data.append("IdPost", IdPost);
+			Data.append("Message", encrypt(Message));
+			Data.append("IdPost", encrypt(IdPost));
 			
 			$.ajax({
 					url         : 'ajax/message.php',
